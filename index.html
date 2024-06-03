@@ -4,33 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video</title>
-    <style>
-        video::-internal-media-controls-overlay-cast-button,
-        video::-webkit-media-controls-enclosure {
-            display: none !important;
-        }
-        video::-webkit-media-controls-panel {
-            display: none !important;
-            -webkit-appearance: none;
-        }
-    </style>
-    <script>
-        function onVideoEnded() {
-            window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLScVCAL94Qda2BniRGKpduFL8BRRe_Epigq0c0OTanV2WP5z4w/viewform?usp=sf_link"; // Zamenite sa URL-om na koji želite preusmeriti korisnika
-        }
-    </script>
 </head>
 <body>
-    <video id="video" width="640" height="480" autoplay onended="onVideoEnded()">
-        <source src="https://drive.google.com/file/d/1BeMd01qacnsypfDzkg-5ESE2KGSlqGNK/view?t=3" type="video/mp4">
-        
-    </video>
-    <script>
-        var video = document.getElementById('video');
-        video.controls = false;
-        video.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        });
-    </script>
+  <iframe src="https://drive.google.com/file/d/1BeMd01qacnsypfDzkg-5ESE2KGSlqGNK/preview controls=0 & autoplay=1" width="640" height="480" allow="autoplay"></iframe>
 </body>
-</htm
+</html>
