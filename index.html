@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kratak video sadržaj</title>
-     <style>
+    <style>
         /* Optional styling for the video container */
         #videoContainer {
             position: relative;
@@ -18,22 +18,42 @@
 </head>
 <body>
     <div id="videoContainer">
-        <iframe id="driveVideo" src="https://drive.google.com/file/d/1fjlkB-mPXp2pDGNA1SAcCywgckcLyjO0/preview?autoplay=1&modestbranding=1&controls=0&rel=0" width="640" height="360"  allow="autoplay" allowfullscreen></iframe>
+        <iframe id="driveVideo" src="https://drive.google.com/file/d/1fjlkB-mPXp2pDGNA1SAcCywgckcLyjO0/preview?autoplay=1" width="640" height="360" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var video = document.getElementById('driveVideo');
-            
-            // Disable controls
-            video.controls = false;
+            var iframe = document.getElementById('driveVideo');
+
+            // Function to post a message to the iframe
+            function postMessageToIframe(message) {
+                iframe.contentWindow.postMessage(message, '*');
+            }
+
+            // Function to prevent replay
+            function preventReplay() {
+                postMessageToIframe('{"event":"command","func":"pauseVideo","args":""}');
+            }
 
             // Add event listener to detect when the video ends
-            video.addEventListener('ended', function () {
-                // Close the window or navigate to another page
-                window.close();  // This will try to close the window
-                // window.location.href = 'https://www.example.com';  // Use this to navigate to another page
+            window.addEventListener('message', function(event) {
+                if (event.origin !== "https://drive.google.com") {
+                    return;
+                }
+
+                var data = JSON.parse(event.data);
+                if (data.event === 'infoDelivery' && data.info && data.info.playerState === 0) {
+                    preventReplay();
+                    // Close the window or navigate to another page
+                    window.close();  // This will try to close the window
+                    // window.location.href = 'https://www.example.com';  // Use this to navigate to another page
+                }
             });
+
+            // Initialize video player API when the iframe loads
+            iframe.onload = function () {
+                // Add any initialization code here if necessary
+            };
         });
     </script>
 </body>
