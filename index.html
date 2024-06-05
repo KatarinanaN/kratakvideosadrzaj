@@ -23,30 +23,17 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var iframe = document.getElementById('driveVideo');
+            var video = document.getElementById('driveVideo');
+            
+            // Disable controls
+            video.controls = false;
 
-            // Function to prevent replay
-            function preventReplay() {
-                var playerWindow = iframe.contentWindow;
-                playerWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-            }
-
-            iframe.onload = function () {
-                // Post message to disable controls (for embedded iframe player)
-                iframe.contentWindow.postMessage('{"event":"command","func":"hideControls","args":""}', '*');
-
-                // Add event listener to detect when the video ends
-                window.addEventListener('message', function(event) {
-                    if (event.origin !== "https://drive.google.com") {
-                        return;
-                    }
-
-                    var data = JSON.parse(event.data);
-                    if (data.event === 'infoDelivery' && data.info && data.info.playerState === 0) {
-                        preventReplay();
-                    }
-                });
-            };
+            // Add event listener to detect when the video ends
+            video.addEventListener('ended', function () {
+                // Close the window or navigate to another page
+                window.close();  // This will try to close the window
+                // window.location.href = 'https://www.example.com';  // Use this to navigate to another page
+            });
         });
     </script>
 </body>
