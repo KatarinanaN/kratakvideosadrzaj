@@ -22,18 +22,32 @@
     </div>
 
     <script>
-        // Prevent video replay by disabling the loop parameter
-        document.getElementById('driveVideo').addEventListener('load', function() {
-            var iframe = this;
-            var player = new YT.Player(iframe, {
-                events: {
-                    'onStateChange': function(event) {
-                        if (event.data === YT.PlayerState.ENDED) {
-                            iframe.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*');
-                        }
+        document.addEventListener('DOMContentLoaded', function () {
+            var iframe = document.getElementById('driveVideo');
+
+            // Function to prevent replay
+            function preventReplay() {
+                var playerWindow = iframe.contentWindow;
+                playerWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+            }
+
+            iframe.onload = function () {
+                // Post message to disable controls (for embedded iframe player)
+                iframe.contentWindow.postMessage('{"event":"command","func":"hideControls","args":""}', '*');
+
+                // Add event listener to detect when the video ends
+                window.addEventListener('message', function(event) {
+                    if (event.origin !== "https://drive.google.com") {
+                        return;
                     }
-                }
-            });
+
+                    var data = JSON.parse(event.data);
+                    if (data.event === 'infoDelivery' && data.info && data.info.playerState === 0) {
+                        preventReplay();
+                    }
+                });
+            };
         });
     </script>
 </body>
+</html>
