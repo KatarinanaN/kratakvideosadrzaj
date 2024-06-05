@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,17 +24,36 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Set the video duration in milliseconds (e.g., 60 seconds = 60000 milliseconds)
-            var videoDuration = 24000; // Replace this with your video's duration
-
-            // Start the timer when the video is loaded
             var iframe = document.getElementById('driveVideo');
+
+            // Function to post a message to the iframe
+            function postMessageToIframe(message) {
+                iframe.contentWindow.postMessage(message, '*');
+            }
+
+            // Function to prevent replay
+            function preventReplay() {
+                postMessageToIframe('{"event":"command","func":"pauseVideo","args":""}');
+            }
+
+            // Add event listener to detect when the video ends
+            window.addEventListener('message', function(event) {
+                if (event.origin !== "https://drive.google.com") {
+                    return;
+                }
+
+                var data = JSON.parse(event.data);
+                if (data.event === 'infoDelivery' && data.info && data.info.playerState === 0) {
+                    preventReplay();
+                    // Close the window or navigate to another page
+                    window.close();  // This will try to close the window
+                    // window.location.href = 'https://www.example.com';  // Use this to navigate to another page
+                }
+            });
+
+            // Initialize video player API when the iframe loads
             iframe.onload = function () {
-                setTimeout(function() {
-                    // Close the window or navigate to another page after the video duration
-                    window.close(); // This will try to close the window
-                    // window.location.href = 'https://www.example.com'; // Use this to navigate to another page
-                }, videoDuration);
+                // Add any initialization code here if necessary
             };
         });
     </script>
