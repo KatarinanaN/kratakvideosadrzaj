@@ -4,13 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kratak video sadržaj</title>
-     <script>
-        function onVideoEnded() {
-            window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLScVCAL94Qda2BniRGKpduFL8BRRe_Epigq0c0OTanV2WP5z4w/viewform?usp=sf_link"; // Zameni sa URL-om na koji želite preusmeriti korisnika
+     <style>
+        /* Optional styling for the video container */
+        #videoContainer {
+            position: relative;
+            width: 640px;
+            height: 360px;
+            margin: 0 auto;
+            border: 2px solid #ccc;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
-    </script>
+    </style>
 </head>
 <body>
-  <iframe src="https://drive.google.com/file/d/1BeMd01qacnsypfDzkg-5ESE2KGSlqGNK/preview?" width="640" height="480" allow="autoplay"  encrypted-media></iframe>
+    <div id="videoContainer">
+        <iframe id="driveVideo" src="https://drive.google.com/uc?export=download&id=1BeMd01qacnsypfDzkg-5ESE2KGSlqGNK&autoplay=1&modestbranding=1&showinfo=0&controls=0&rel=0&loop=0" width="640" height="360" frameborder="0" allow="autoplay" allowfullscreen></iframe>
+    </div>
+
+    <script>
+        // Prevent video replay by disabling the loop parameter
+        document.getElementById('driveVideo').addEventListener('load', function() {
+            var iframe = this;
+            var player = new YT.Player(iframe, {
+                events: {
+                    'onStateChange': function(event) {
+                        if (event.data === YT.PlayerState.ENDED) {
+                            iframe.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*');
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </body>
-</html>
